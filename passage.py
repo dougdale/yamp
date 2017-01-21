@@ -15,13 +15,8 @@ class Verse:
     def add_word(self, word):
         self.words.append(Word(word))
 
-    def __str__(self):
-        versestr = str(self.num)
-
-        for word in self.words:
-            versestr = versestr + ' ' + word.text
-
-        return versestr
+    def word_list(self):
+        return [w.text for w in self.words]
 
 
 class PassageParseError(Exception):
@@ -55,7 +50,7 @@ class Passage:
         # Create a verse object using the first verse number
         verse = Verse(int(m.group('verse')))
 
-        # Loop thorugh every 'word' in the passage
+        # Loop through every 'word' in the passage
         for item in items:
             # If the item is all digits, assume a verse number
             if item.isdigit():
@@ -68,12 +63,6 @@ class Passage:
                 verse.add_word(item)
 
         self.verses.append(verse)
-
-    def __str__(self):
-        passagestr = '{} {}:'.format(self.book, self.chapter)
-
-        for verse in self.verses:
-            passagestr = passagestr + verse.__str__() + ' '
 
 
 if __name__ == '__main__':
