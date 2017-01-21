@@ -45,7 +45,7 @@ class Passage:
         if not m:
             raise PassageParseError('Passage does not start with chapter:verse')
 
-        self.chapter = m.group('chapter')
+        self.chapter = int(m.group('chapter'))
 
         # Create a verse object using the first verse number
         verse = Verse(int(m.group('verse')))
