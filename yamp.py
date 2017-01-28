@@ -5,6 +5,6 @@ class Yamp:
         self.passages = []
 
     def add_passage(self, text):
-        p = Passage()
+        p = passage.Passage()
         p.parse(text)
         self.passages.append(p)
