@@ -40,8 +40,8 @@ class PassageTest(unittest.TestCase):
         self.assertEqual(6, p.chapter)
         self.assertEqual(1, len(p.verses))
         self.assertEqual(1, p.verses[0].num)
-        self.assertEqual('What shall we say then? Are we to continue in sin that grace may abound?',
-                         ' '.join(p.verses[0].word_list()))
+        self.assertEqual('1 What shall we say then? Are we to continue in sin that grace may abound?',
+                         str(p.verses[0]))
 
     def test_passage_parse2(self):
         p = passage.Passage()
@@ -55,14 +55,12 @@ class PassageTest(unittest.TestCase):
         self.assertEqual(4, p.chapter)
         self.assertEqual(4, len(p.verses))
 
-        verse_number = [7, 8, 9, 10]
         verse_text = [
-            'But we have this treasure in jars of clay, to show that the surpassing power belongs to God and not to us.',
-            'We are afflicted in every way, but not crushed; perplexed, but not driven to despair;',
-            'persecuted, but not forsaken; struck down, but not destroyed;',
-            'always carrying in the body the death of Jesus, so that the life of Jesus may also be manifested in our bodies.'
+            '7 But we have this treasure in jars of clay, to show that the surpassing power belongs to God and not to us.',
+            '8 We are afflicted in every way, but not crushed; perplexed, but not driven to despair;',
+            '9 persecuted, but not forsaken; struck down, but not destroyed;',
+            '10 always carrying in the body the death of Jesus, so that the life of Jesus may also be manifested in our bodies.'
         ]
 
         for index, v in enumerate(p.verses):
-            self.assertEqual(verse_number[index], v.num)
-            self.assertEqual(verse_text[index], ' '.join(v.word_list()))
+            self.assertEqual(verse_text[index], str(v))

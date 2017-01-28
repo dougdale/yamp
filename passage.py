@@ -18,6 +18,9 @@ class Verse:
     def word_list(self):
         return [w.text for w in self.words]
 
+    def __str__(self):
+        return '{} {}'.format(self.num, ' '.join(self.word_list()))
+
 
 class PassageParseError(Exception):
     pass
