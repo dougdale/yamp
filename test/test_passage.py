@@ -42,15 +42,16 @@ class PassageTest(unittest.TestCase):
         self.assertEqual(1, p.verses[0].num)
         self.assertEqual('1 What shall we say then? Are we to continue in sin that grace may abound?',
                          str(p.verses[0]))
+        self.assertEqual('Romans 6:1', p.passage_name())
 
     def test_passage_parse2(self):
         p = passage.Passage()
         passage_text = '2 Corinthians 4:7 But we have this treasure in jars of clay, ' + \
-                   'to show that the surpassing power belongs to God and not to us. ' + \
-                   '8 We are afflicted in every way, but not crushed; perplexed, ' + \
-                   'but not driven to despair; 9 persecuted, but not forsaken; ' + \
-                   'struck down, but not destroyed; 10 always carrying in the body the death of Jesus, ' + \
-                   'so that the life of Jesus may also be manifested in our bodies.'
+            'to show that the surpassing power belongs to God and not to us. ' + \
+            '8 We are afflicted in every way, but not crushed; perplexed, ' + \
+            'but not driven to despair; 9 persecuted, but not forsaken; ' + \
+            'struck down, but not destroyed; 10 always carrying in the body the death of Jesus, ' + \
+            'so that the life of Jesus may also be manifested in our bodies.'
 
         p.parse(passage_text)
         self.assertEqual('2 Corinthians', p.book)
@@ -58,3 +59,4 @@ class PassageTest(unittest.TestCase):
         self.assertEqual(4, len(p.verses))
 
         self.assertEqual(passage_text, str(p))
+        self.assertEqual('2 Corinthians 4:7-10', p.passage_name())

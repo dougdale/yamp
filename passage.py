@@ -67,6 +67,13 @@ class Passage:
 
         self.verses.append(verse)
 
+    def passage_name(self):
+        s = '{} {}:{}'.format(self.book, self.chapter, self.verses[0].num)
+        if len(self.verses) > 1:
+            s = s + '-{}'.format(self.verses[-1].num)
+
+        return s
+
     def __str__(self):
         s = '{} {}:'.format(self.book, self.chapter)
         for v in self.verses:

@@ -11,3 +11,4 @@ class YampTest(unittest.TestCase):
         passage_text = 'Romans 6:1 What shall we say then? Are we to continue in sin that grace may abound?'
         y.add_passage(passage_text)
         self.assertEqual(passage_text, str(y.passages[0]))
+        self.assertEqual(['Romans 6:1'], y.passage_list())
