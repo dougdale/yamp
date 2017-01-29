@@ -1,25 +1,69 @@
 import re
+import json
 
 
 class Word:
-    def __init__(self, text):
-        self.tries = 0
+    def __init__(self, text, tries=0):
+        self.tries = tries
         self.text = text
 
 
+class WordEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, Word):
+            return o.__dict__
+
+        # Wrong object. Let base class raise error
+        return json.JSONEncoder.default(self, o)
+
+
+class WordDecoder(json.JSONDecoder):
+    def decode(self, s, *kwargs):
+        d = json.JSONDecoder.decode(self, s, *kwargs)
+        return Word(d['text'], tries=d['tries'])
+
+
 class Verse:
-    def __init__(self, num):
+    def __init__(self, num, words=None):
         self.num = num
-        self.words = []
+        if words:
+            self.words = words
+        else:
+            self.words = []
 
     def add_word(self, word):
-        self.words.append(Word(word))
+        if not isinstance(word, Word):
+            word = Word(word)
+
+        self.words.append(word)
 
     def word_list(self):
         return [w.text for w in self.words]
 
     def __str__(self):
         return '{} {}'.format(self.num, ' '.join(self.word_list()))
+
+
+class VerseEncoder(json.JSONEncoder):
+    def default(self, o):
+        d = {'num': o.num, 'words': []}
+        word_encoder = WordEncoder()
+        for w in o.words:
+            d['words'].append(word_encoder.default(w))
+
+        return d
+
+
+class VerseDecoder(json.JSONDecoder):
+    def decode(self, s, *kwargs):
+        d = json.JSONDecoder.decode(self, s, *kwargs)
+
+        v = Verse(d['num'])
+
+        for word_info in d['words']:
+            v.add_word(Word(word_info['text'], word_info['tries']))
+            
+        return v
 
 
 class PassageParseError(Exception):
@@ -80,3 +124,4 @@ class Passage:
             s = s + str(v) + ' '
 
         return s.rstrip()
+
