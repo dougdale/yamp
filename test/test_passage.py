@@ -10,7 +10,8 @@ class WordTest(unittest.TestCase):
         self.assertEqual('test', w.text)
 
     def test_word_json(self):
-        out_word = passage.Word('test', tries=2)
+        out_word = passage.Word('test')
+        out_word.tries = 2
         s = json.dumps(out_word, cls=passage.WordEncoder)
         in_word = json.loads(s, cls=passage.WordDecoder)
 
@@ -42,6 +43,14 @@ class VerseTest(unittest.TestCase):
 
 
 class PassageTest(unittest.TestCase):
+    def setUp(self):
+        self.passage_text = '2 Corinthians 4:7 But we have this treasure in jars of clay, ' + \
+            'to show that the surpassing power belongs to God and not to us. ' + \
+            '8 We are afflicted in every way, but not crushed; perplexed, ' + \
+            'but not driven to despair; 9 persecuted, but not forsaken; ' + \
+            'struck down, but not destroyed; 10 always carrying in the body the death of Jesus, ' + \
+            'so that the life of Jesus may also be manifested in our bodies.'
+
     def test_passage_init(self):
         p = passage.Passage()
         self.assertEqual([], p.verses)
@@ -65,17 +74,20 @@ class PassageTest(unittest.TestCase):
 
     def test_passage_parse2(self):
         p = passage.Passage()
-        passage_text = '2 Corinthians 4:7 But we have this treasure in jars of clay, ' + \
-            'to show that the surpassing power belongs to God and not to us. ' + \
-            '8 We are afflicted in every way, but not crushed; perplexed, ' + \
-            'but not driven to despair; 9 persecuted, but not forsaken; ' + \
-            'struck down, but not destroyed; 10 always carrying in the body the death of Jesus, ' + \
-            'so that the life of Jesus may also be manifested in our bodies.'
 
-        p.parse(passage_text)
+        p.parse(self.passage_text)
         self.assertEqual('2 Corinthians', p.book)
         self.assertEqual(4, p.chapter)
         self.assertEqual(4, len(p.verses))
 
-        self.assertEqual(passage_text, str(p))
+        self.assertEqual(self.passage_text, str(p))
         self.assertEqual('2 Corinthians 4:7-10', p.passage_name())
+
+    def test_passage_json(self):
+        out_passage = passage.Passage()
+
+        out_passage.parse(self.passage_text)
+        s = json.dumps(out_passage, cls=passage.PassageEncoder)
+        in_passage = json.loads(s, cls=passage.PassageDecoder)
+
+        self.assertEqual(self.passage_text, str(in_passage))
