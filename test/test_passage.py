@@ -45,22 +45,16 @@ class PassageTest(unittest.TestCase):
 
     def test_passage_parse2(self):
         p = passage.Passage()
-        p.parse('''2 Corinthians 4:7 But we have this treasure in jars of clay,
-                   to show that the surpassing power belongs to God and not to us.
-                   8 We are afflicted in every way, but not crushed; perplexed,
-                   but not driven to despair; 9 persecuted, but not forsaken;
-                   struck down, but not destroyed; 10 always carrying in the body the death of Jesus,
-                   so that the life of Jesus may also be manifested in our bodies.''')
+        passage_text = '2 Corinthians 4:7 But we have this treasure in jars of clay, ' + \
+                   'to show that the surpassing power belongs to God and not to us. ' + \
+                   '8 We are afflicted in every way, but not crushed; perplexed, ' + \
+                   'but not driven to despair; 9 persecuted, but not forsaken; ' + \
+                   'struck down, but not destroyed; 10 always carrying in the body the death of Jesus, ' + \
+                   'so that the life of Jesus may also be manifested in our bodies.'
+
+        p.parse(passage_text)
         self.assertEqual('2 Corinthians', p.book)
         self.assertEqual(4, p.chapter)
         self.assertEqual(4, len(p.verses))
 
-        verse_text = [
-            '7 But we have this treasure in jars of clay, to show that the surpassing power belongs to God and not to us.',
-            '8 We are afflicted in every way, but not crushed; perplexed, but not driven to despair;',
-            '9 persecuted, but not forsaken; struck down, but not destroyed;',
-            '10 always carrying in the body the death of Jesus, so that the life of Jesus may also be manifested in our bodies.'
-        ]
-
-        for index, v in enumerate(p.verses):
-            self.assertEqual(verse_text[index], str(v))
+        self.assertEqual(passage_text, str(p))

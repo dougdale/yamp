@@ -67,12 +67,9 @@ class Passage:
 
         self.verses.append(verse)
 
+    def __str__(self):
+        s = '{} {}:'.format(self.book, self.chapter)
+        for v in self.verses:
+            s = s + str(v) + ' '
 
-if __name__ == '__main__':
-    passage = Passage()
-
-    with open("romans6.txt") as f:
-        passage.parse(f.read())
-
-    print('Passage:')
-    print(passage)
+        return s.rstrip()
