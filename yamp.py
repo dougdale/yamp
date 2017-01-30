@@ -8,6 +8,7 @@ A program to assist in memorizing Bible verses.
 
 import sys
 import argparse
+import json
 
 import passage
 
@@ -15,9 +16,22 @@ class Yamp:
     def __init__(self):
         self.passages = []
 
-    def add_passage(self, text):
-        p = passage.Passage()
-        p.parse(text)
+    @classmethod
+    def from_json_dict(cls, d):
+        yamp = cls()
+
+        for passage_dict in d['passages']:
+            yamp.add_passage(passage.Passage.from_json_dict(passage_dict))
+
+        return yamp
+
+    def add_passage(self, new_passage):
+        if isinstance(new_passage, passage.Passage):
+            p = new_passage
+        else:
+            p = passage.Passage()
+            p.parse(new_passage)
+
         self.passages.append(p)
 
     def passage_list(self):
@@ -27,6 +41,32 @@ class Yamp:
 
         return passage_names
 
+    def save(self, filename):
+        with open(filename, 'w') as f:
+            json.dump(self, f, cls=YampEncoder)
+
+
+class YampEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, Yamp):
+            d = {'passages': []}
+
+            passage_encoder = passage.PassageEncoder()
+            for p in o.passages:
+                d['passages'].append(passage_encoder.default(p))
+
+            return d
+
+        # Wrong object. Let base class raise error
+        return json.JSONEncoder.default(self, o)
+
+
+class YampDecoder(json.JSONDecoder):
+    def decode(self, s, *kwargs):
+        d = json.JSONDecoder.decode(self, s, *kwargs)
+
+        return Yamp.from_json_dict(d)
+
 def main(args):
     '''Entry point when yamp.py is run from command line'''
 
@@ -35,6 +75,8 @@ def main(args):
     if args.new:
         cli_yamp.add_passage(args.new.read())
         print(cli_yamp.passage_list())
+
+    cli_yamp.save('yamp.json')
 
     return 0
 
