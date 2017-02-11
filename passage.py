@@ -4,7 +4,7 @@ import json
 
 class Word:
     def __init__(self, text):
-        self.tries = 0
+        self.tries = []
         self.text = text
 
     @classmethod
@@ -13,6 +13,23 @@ class Word:
         word.tries = d['tries']
 
         return word
+
+    def add_try(self, count):
+        self.tries.append(count)
+
+        # Make sure list never exceeds 10 items
+        if len(self.tries) > 10:
+            self.tries = self.tries[-10:]
+
+    def try_average(self):
+        length = len(self.tries)
+
+        if length:
+            average = sum(self.tries)/length
+        else:
+            average = 0
+
+        return average
 
 class WordEncoder(json.JSONEncoder):
     def default(self, o):

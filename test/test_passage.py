@@ -9,6 +9,29 @@ class WordTest(unittest.TestCase):
         w = passage.Word('test')
         self.assertEqual('test', w.text)
 
+    def test_add_try(self):
+        w = passage.Word('test')
+        w.add_try(1)
+        w.add_try(2)
+        w.add_try(3)
+        w.add_try(4)
+        w.add_try(5)
+        w.add_try(6)
+        w.add_try(7)
+        w.add_try(8)
+        w.add_try(9)
+        w.add_try(10)
+        w.add_try(11)
+        self.assertEqual([2, 3, 4, 5, 6, 7, 8, 9, 10, 11], w.tries)
+
+    def test_try_average(self):
+        w = passage.Word('test')
+        self.assertEqual(0, w.try_average())
+        w.add_try(2)
+        self.assertEqual(2, w.try_average())
+        w.add_try(4)
+        self.assertEqual(3, w.try_average())
+
     def test_word_json(self):
         out_word = passage.Word('test')
         out_word.tries = 2
