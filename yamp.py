@@ -45,6 +45,13 @@ class Yamp:
         with open(filename, 'w') as f:
             json.dump(self, f, cls=YampEncoder)
 
+    @staticmethod
+    def load(filename):
+        with open(filename, 'r') as f:
+            y = json.load(f, cls=YampDecoder)
+
+        return y
+
 
 class YampEncoder(json.JSONEncoder):
     def default(self, o):
@@ -70,11 +77,16 @@ class YampDecoder(json.JSONDecoder):
 def main(args):
     '''Entry point when yamp.py is run from command line'''
 
-    cli_yamp = Yamp()
+    # Load from yamp.json, otherwise start with new.
+    try:
+        cli_yamp = Yamp.load('yamp.json')
+    except FileNotFoundError:
+        cli_yamp = Yamp()
 
     if args.new:
         cli_yamp.add_passage(args.new.read())
-        print(cli_yamp.passage_list())
+
+    print(cli_yamp.passage_list())
 
     cli_yamp.save('yamp.json')
 
