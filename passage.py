@@ -72,19 +72,19 @@ class Verse:
         return [w.text for w in self.words]
 
     def mastery_score(self):
-        sum = 0
+        score_sum = 0
         count = 0
 
-        for word in words:
+        for word in self.words:
             average = word.try_average()
 
             if not average:
                 return None
             else:
-                sum += average
-                count = count + 1
+                score_sum += average
+                count += 1
 
-        return sum/float(count)
+        return score_sum/float(count)
 
     def __str__(self):
         return '{} {}'.format(self.num, ' '.join(self.word_list()))
@@ -190,7 +190,7 @@ class Passage:
         return s.rstrip()
 
     def generate_learn_verses(self):
-        max = 0
+        max_score = 0
         max_verse = None
 
         for verse in self.verses:
@@ -201,8 +201,8 @@ class Passage:
             if not score:
                 yield verse
             else:
-                if score > max:
-                    max = score
+                if score > max_score:
+                    max_score = score
                     max_verse = verse
 
         # Yield the index of the maximum mastery score.

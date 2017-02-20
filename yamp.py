@@ -123,8 +123,11 @@ def main(args):
     print('Miss limit: {}'.format(cli_yamp.miss_limit))
     print('Mastery threshold: {}'.format(cli_yamp.mastery_threshold))
     print(cli_yamp.passage_list())
-    for verse in cli_yamp.passages[0].generate_review_verses():
-        print(verse)
+
+    sequence = cli_yamp.passages[0].generate_learn_verses()
+
+    verse = next(sequence)
+    print(verse)
 
     cli_yamp.save('yamp.json')
 
