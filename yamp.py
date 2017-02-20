@@ -42,6 +42,8 @@ class Yamp:
     def from_json_dict(cls, d):
         yamp = cls()
 
+        yamp.miss_limit = d['miss_limit']
+        yamp.mastery_threshold = d['mastery_threshold']
         for passage_dict in d['passages']:
             yamp.add_passage(passage.Passage.from_json_dict(passage_dict))
 
@@ -78,7 +80,9 @@ class Yamp:
 class YampEncoder(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, Yamp):
-            d = {'passages': []}
+            d = {'miss_limit': o.miss_limit,
+                 'mastery_threshold': o.mastery_threshold,
+                 'passages': []}
 
             passage_encoder = passage.PassageEncoder()
             for p in o.passages:
