@@ -15,11 +15,35 @@ import passage
 class Yamp:
     def __init__(self):
         self.passages = []
+        self._miss_limit = 3
+        self._mastery_threshold = 1.5
+
+    @property
+    def miss_limit(self):
+        return self._miss_limit
+
+    @miss_limit.setter
+    def miss_limit(self, value):
+        if value < 1:
+            value = 1
+        self._miss_limit = value
+
+    @property
+    def mastery_threshold(self):
+        return self._mastery_threshold
+
+    @mastery_threshold.setter
+    def mastery_threshold(self, value):
+        if value < 1.0:
+            value = 1.0
+        self._mastery_threshold = value
 
     @classmethod
     def from_json_dict(cls, d):
         yamp = cls()
 
+        yamp.miss_limit = d['miss_limit']
+        yamp.mastery_threshold = d['mastery_threshold']
         for passage_dict in d['passages']:
             yamp.add_passage(passage.Passage.from_json_dict(passage_dict))
 
@@ -56,7 +80,9 @@ class Yamp:
 class YampEncoder(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, Yamp):
-            d = {'passages': []}
+            d = {'miss_limit': o.miss_limit,
+                 'mastery_threshold': o.mastery_threshold,
+                 'passages': []}
 
             passage_encoder = passage.PassageEncoder()
             for p in o.passages:
@@ -74,6 +100,7 @@ class YampDecoder(json.JSONDecoder):
 
         return Yamp.from_json_dict(d)
 
+
 def main(args):
     '''Entry point when yamp.py is run from command line'''
 
@@ -86,6 +113,15 @@ def main(args):
     if args.new:
         cli_yamp.add_passage(args.new.read())
 
+    if args.misses:
+        cli_yamp.miss_limit = args.misses
+
+    if args.mastery:
+        cli_yamp.mastery_threshold = args.mastery
+
+
+    print('Miss limit: {}'.format(cli_yamp.miss_limit))
+    print('Mastery threshold: {}'.format(cli_yamp.mastery_threshold))
     print(cli_yamp.passage_list())
 
     cli_yamp.save('yamp.json')
@@ -99,8 +135,22 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=formatter_class)
 
-    parser.add_argument('--new', help="Add new passage from text file",
+    parser.add_argument('--new',
+                        help="Add new passage from text file",
                         type=argparse.FileType('r'))
+    parser.add_argument('--misses',
+                        help='New value for number of misses allowed before word is revealed (this is saved by yamp)',
+                        type=int)
+    parser.add_argument('--mastery',
+                        help='New verse mastery threshold (attempts per word - this is saved by yamp)',
+                        type=float)
+    parser.add_argument('--passage',
+                        help='Specify passage to review',
+                        type=str)
+    parser.add_argument('--mode',
+                        help='Review mode (learn, review, or auto)',
+                        type=str,
+                        default='auto')
 
     args = parser.parse_args(sys.argv[1:])
 
