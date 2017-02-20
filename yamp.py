@@ -123,6 +123,8 @@ def main(args):
     print('Miss limit: {}'.format(cli_yamp.miss_limit))
     print('Mastery threshold: {}'.format(cli_yamp.mastery_threshold))
     print(cli_yamp.passage_list())
+    for verse in cli_yamp.passages[0]:
+        print(verse)
 
     cli_yamp.save('yamp.json')
 
@@ -148,9 +150,9 @@ if __name__ == '__main__':
                         help='Specify passage to review',
                         type=str)
     parser.add_argument('--mode',
-                        help='Review mode (learn, review, or auto)',
+                        help='Review mode (learn or review)',
                         type=str,
-                        default='auto')
+                        default='learn')
 
     args = parser.parse_args(sys.argv[1:])
 

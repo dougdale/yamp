@@ -25,11 +25,13 @@ class Word:
         length = len(self.tries)
 
         if length:
-            average = sum(self.tries)/length
+            average = float(sum(self.tries))/length
         else:
-            average = 0
+            # Return None if no attempts
+            average = None
 
         return average
+
 
 class WordEncoder(json.JSONEncoder):
     def default(self, o):
@@ -69,6 +71,21 @@ class Verse:
     def word_list(self):
         return [w.text for w in self.words]
 
+    def mastery_score(self):
+        sum = 0
+        count = 0
+
+        for word in words:
+            average = word.try_average()
+
+            if not average:
+                return None
+            else:
+                sum += average
+                count = count + 1
+
+        return sum/float(count)
+
     def __str__(self):
         return '{} {}'.format(self.num, ' '.join(self.word_list()))
 
@@ -103,6 +120,10 @@ class Passage:
         self.verses = []
         self.book = None
         self.chapter = 0
+
+        # Iteration info
+        self.iter_mode = None
+        self.iter_index = 0
 
     @classmethod
     def from_json_dict(cls, d):
@@ -157,7 +178,7 @@ class Passage:
     def passage_name(self):
         s = '{} {}:{}'.format(self.book, self.chapter, self.verses[0].num)
         if len(self.verses) > 1:
-            s = s + '-{}'.format(self.verses[-1].num)
+            s += '-{}'.format(self.verses[-1].num)
 
         return s
 
@@ -168,6 +189,16 @@ class Passage:
 
         return s.rstrip()
 
+    def __iter__(self):
+        self.iter_index = 0
+        return self
+
+    def __next__(self):
+        self.iter_index += 1
+        if self.iter_index >= len(self.verses):
+            raise StopIteration
+
+        return self.verses[self.iter_index]
 
 class PassageEncoder(json.JSONEncoder):
     def default(self, o):
@@ -188,4 +219,3 @@ class PassageDecoder(json.JSONDecoder):
         d = json.JSONDecoder.decode(self, s, *kwargs)
 
         return Passage.from_json_dict(d)
-
