@@ -26,7 +26,7 @@ class WordTest(unittest.TestCase):
 
     def test_try_average(self):
         w = passage.Word('test')
-        self.assertEqual(0, w.try_average())
+        self.assertEqual(None, w.try_average())
         w.add_try(2)
         self.assertEqual(2, w.try_average())
         w.add_try(4)

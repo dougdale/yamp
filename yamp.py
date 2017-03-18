@@ -12,6 +12,7 @@ import json
 
 import passage
 
+
 class Yamp:
     def __init__(self):
         self.passages = []
@@ -60,8 +61,8 @@ class Yamp:
 
     def passage_list(self):
         passage_names = []
-        for passage in self.passages:
-            passage_names.append(passage.passage_name())
+        for p in self.passages:
+            passage_names.append(p.passage_name())
 
         return passage_names
 
@@ -102,7 +103,7 @@ class YampDecoder(json.JSONDecoder):
 
 
 def main(args):
-    '''Entry point when yamp.py is run from command line'''
+    """Entry point when yamp.py is run from command line"""
 
     # Load from yamp.json, otherwise start with new.
     try:
@@ -119,15 +120,14 @@ def main(args):
     if args.mastery:
         cli_yamp.mastery_threshold = args.mastery
 
-
     print('Miss limit: {}'.format(cli_yamp.miss_limit))
     print('Mastery threshold: {}'.format(cli_yamp.mastery_threshold))
     print(cli_yamp.passage_list())
 
-    sequence = cli_yamp.passages[0].generate_learn_verses()
+    sequence = cli_yamp.passages[0].generate_review_verses()
 
-    verse = next(sequence)
-    print(verse)
+    for verse in sequence:
+        print(verse)
 
     cli_yamp.save('yamp.json')
 
@@ -157,9 +157,9 @@ if __name__ == '__main__':
                         type=str,
                         default='learn')
 
-    args = parser.parse_args(sys.argv[1:])
+    cl_args = parser.parse_args(sys.argv[1:])
 
-    print(args)
+    print(cl_args)
 
     # Call main() with parsed args
-    sys.exit(main(args))
+    sys.exit(main(cl_args))

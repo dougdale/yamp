@@ -190,30 +190,29 @@ class Passage:
         return s.rstrip()
 
     def generate_learn_verses(self):
-        max_score = 0
-        max_verse = None
+        while True:
+            max_score = 0
+            max_verse = None
 
-        for verse in self.verses:
-            score = verse.mastery_score()
+            for verse in self.verses:
+                score = verse.mastery_score()
 
-            # If we find a verse that has not been attempted, immediately return
-            # its index. Otherwise, look for the maximum mastery score.
-            if not score:
-                yield verse
-            else:
-                if score > max_score:
-                    max_score = score
+                # If we find a verse that has not been attempted, return
+                # that verse. Otherwise, look for the maximum mastery score.
+                if not score:
                     max_verse = verse
+                    break
+                else:
+                    if score > max_score:
+                        max_score = score
+                        max_verse = verse
 
-        # Yield the index of the maximum mastery score.
-        # Note that this generator never ends!!!
-        yield max_verse
+            # Yield the index of the maximum mastery score.
+            # Note that this generator never ends!!!
+            yield max_verse
 
     def generate_review_verses(self):
-        for verse in self.verses:
-            yield verse
-
-        raise StopIteration
+        yield from self.verses
 
 
 class PassageEncoder(json.JSONEncoder):
