@@ -11,7 +11,7 @@ import argparse
 import json
 
 import passage
-
+import getch
 
 class Yamp:
     def __init__(self):
@@ -102,6 +102,29 @@ class YampDecoder(json.JSONDecoder):
         return Yamp.from_json_dict(d)
 
 
+def cl_verse_check(book, chapter, verse, miss_limit):
+    print('{} {}:{}'.format(book, chapter, verse.num))
+
+    for word in verse.words:
+        done = False
+        count = 0
+
+        first_letter = word.text[0].lower()
+
+        while not done:
+            c = getch.getch()
+
+            if c in 'abcdefghijklmnopqrstuvwxyz':
+                count = count + 1
+
+                if c == first_letter or count >= miss_limit:
+                    print(word.text + ' ')
+                    word.add_try(count)
+                    done = True
+
+    print('')
+
+
 def main(args):
     """Entry point when yamp.py is run from command line"""
 
@@ -124,10 +147,19 @@ def main(args):
     print('Mastery threshold: {}'.format(cli_yamp.mastery_threshold))
     print(cli_yamp.passage_list())
 
-    sequence = cli_yamp.passages[0].generate_review_verses()
+    selected_passage = cli_yamp.passages[0]
 
-    for verse in sequence:
-        print(verse)
+    sequence = selected_passage.generate_review_verses()
+
+    done = False
+
+    while not done:
+        cl_verse_check(selected_passage.book, selected_passage.chapter, next(sequence), cli_yamp.miss_limit)
+
+        print('Q to quit, anything else to continue')
+
+        if getch.getch() == 'Q':
+            done = True
 
     cli_yamp.save('yamp.json')
 
